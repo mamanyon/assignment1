@@ -19,7 +19,7 @@ public:
 
     virtual Tree *clone() const=0;
 
-    const Tree& getChild(int) const;
+    //const Tree& getChild(int) const;
     int NumberOfChildren();
     static Tree* createTree(const Session& session, int rootLabel);
     virtual int traceTree()=0;
@@ -51,6 +51,7 @@ public:
     MaxRankTree(int rootLabel);
     virtual int traceTree();
     virtual Tree *clone() const;
+    std::vector<int> tracing();
 };
 
 class RootTree: public Tree{

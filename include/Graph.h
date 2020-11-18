@@ -2,8 +2,8 @@
 #define GRAPH_H_
 #include <queue>
 #include <vector>
-#include "Tree.h"
-using namespace std;
+class Tree;
+class Session;
 
 enum condition{
     healthy,
@@ -17,19 +17,20 @@ public:
     Graph(std::vector<std::vector<int>> matrix);
     std::vector<std::vector<int>> getEdges() const;
     condition getStatus(int) const;
-    void setStatus(int);
     void infectNode(int nodeInd);
     bool isInfected(int nodeInd);
     Tree *BFS(const Session &session , int root) const;
-    void BFS_run(const Session &session , queue<Tree*>&q, vector<bool>&VisitedArr);
-    void printStatus();
-    int getGraphSize() const;
-    bool TestTermination(Graph *pGraph);
+    void BFS_run(const Session &session , std::queue<Tree*>&q, std::vector<bool>&VisitedArr);
     void quarantine(int);
+    int getGraphSize() const;
+
+
+    bool TestTermination(Graph *pGraph);
+    void printStatus();
 
 private:
     std::vector<std::vector<int>> edges;
-    vector<condition> status;
+    std::vector<condition> status;
 
 };
 

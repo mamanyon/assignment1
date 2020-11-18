@@ -1,4 +1,4 @@
-#include "../h/Agent.h"
+#include "../include/Agent.h"
 
 Agent::Agent() {};
 
@@ -31,12 +31,12 @@ void ContactTracer::act(Session &session) {
         Graph k = session.getGraph();
         if (k.getStatus(nodeInd) == carrier)
             session.enqueueInfected(nodeInd);
-        k.setStatus(nodeInd);
+        k.infectNode(nodeInd);
         for (int i = 0; i < k.getGraphSize(); i++) {
             if (k.getStatus(i) == healthy) {
                 Virus v(i);
                 session.addAgent(v);
-                k.setStatus(i);
+                k.infectNode(i);
                 break;
             }
         }
