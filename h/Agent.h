@@ -2,6 +2,7 @@
 #define AGENT_H_
 #include <vector>
 #include "Session.h"
+#include "Tree.h"
 
 class Agent{
 public:

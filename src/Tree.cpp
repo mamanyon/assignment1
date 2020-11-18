@@ -3,22 +3,26 @@
 #include "../h/Session.h"
 using namespace std;
 //rule of 5
+//____________
 
-Tree::~Tree(){ //destructor
-    int size = children.size();
-    for(int i=0; i <size; i++)
-        delete children[i];
+
+//destructor
+Tree::~Tree(){
+    clear();
 }
-Tree::Tree(int rootLabel) : node(rootLabel) {}; //constructor
+
+//constructor
+Tree::Tree(int rootLabel) : node(rootLabel) {};
 
 //copy constructor
 Tree::Tree(const Tree &otherT):node(otherT.node),children(std::vector<Tree*>(otherT.children.size())){
     copyChildren(otherT);
 }
+
 //copy assignment
 Tree &Tree::operator=(const Tree &otherT) {
     if (this != &otherT) {
-        node = 0;
+       // node = 0;
         children.clear();
         //___________
         node = otherT.node;
@@ -26,17 +30,20 @@ Tree &Tree::operator=(const Tree &otherT) {
     }
     return *this;
 }
+//_________________________
+//copy & clear private functions
 void Tree::copyChildren(const Tree &otherT) {
     int length = otherT.children.size();
     for (int i = 0; i < length; i++) {
         children[i] = otherT.children[i]->clone();
     }
 }
-
-
-//make another methode name copy .
-//make clear function  otherT.node = 0;
-//        otherT.children.clear();
+void Tree::clear() {
+    int length= children.size();
+    for(int i=0; i<length; i++)
+        delete children[i];
+}
+//_________________________
 Tree::Tree(Tree &&otherT) : node(otherT.node) { //move constructor
     int length = otherT.children.size();
     for (int i = 0; i < length; i++)
@@ -44,13 +51,15 @@ Tree::Tree(Tree &&otherT) : node(otherT.node) { //move constructor
     otherT.node = 0;
     otherT.children.clear();
 }
-
-
-Tree & Tree::operator=(const Tree &&otherT) { //move assignment
+//need to check if ok \/\/\/\/\/\/
+//move assignment
+Tree & Tree::operator=(const Tree &&otherT) {
     if(this != &otherT){
-
+    this->node=otherT.node;
+    clear();
+    children=std::move(otherT.children);
     }
-
+    return *this;
 }
 
 
@@ -80,12 +89,14 @@ int Tree::NumberOfChildren() {
     return children.size();
 }
 
-void Tree::clear() {
-node=0;
-
+int Tree::getRoot() {
+    return node;
 }
-
-
+int getMax(int root){
+    if(false)
+        return 0;
+    return 0;
+}
 
 //____________________________________________________________________________________
 CycleTree::CycleTree(int rootLabel, int currCycle) : Tree(rootLabel) {//constructor
@@ -98,6 +109,7 @@ Tree * CycleTree::clone() const { //shallow copy
 
 int CycleTree::traceTree() {
     if(currCycle==0)return node;
+
     int depth= 0;
 
     return 0;
@@ -108,14 +120,16 @@ int CycleTree::traceTree() {
 MaxRankTree::MaxRankTree(int rootLabel) : Tree(node) {};
 
 int MaxRankTree::traceTree() {
-int maximumRank = children.size();
-for(int i=1; i<children.size(); i++) {
+int maxRank=0;
+for(int i=0; i<children.size(); i++) {
+    if(children[i].getMax(node)>maxRank)
     int numChild = (children[i]->NumberOfChildren());
     if (maximumRank < numChild)
         maximumRank = i;
 }
     return maximumRank;
 }
+
 
 Tree *MaxRankTree::clone() const{
     return new MaxRankTree(*this);

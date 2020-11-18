@@ -21,18 +21,16 @@ TreeType Session::getTreeType() const {
     return treeType;
 }
 
-Graph Session::getGraph() const {
-    return g;
-}
+
 
 void Session::addAgent(const Agent &agent) {
-
+    Agent* newAgent = agent.clone();
+    agents.push_back(newAgent);
 }
-
-Session::Session(const Session& other):g(other.getGraph()),treeType(other.getTreeType()),agents(),counterCurrCycle(other.getCurrCycle()) {//copy constructor
+//copy constructor
+Session::Session(const Session& other):g(other.getGraph()),treeType(other.getTreeType()),agents(),counterCurrCycle(other.getCurrCycle()) {
     for(int i=0; i<other.agents.size() ; i++){
-        Agent* newAgent = (other.agents[i])->clone();
-        agents.push_back(newAgent);
+
     }
 }
 
@@ -45,7 +43,7 @@ void Session::simulate(){
     while(!over){
         cout << "________Round " << counterCurrCycle << "__________" << endl;
         vector<Agent*> agents_second(this->agents);
-        for (Agent *agent: agents_second) {
+        for (Agent *agent: agents_second) {//change to any loop  with terminAtion
             agent->act(*this);
         }
         if(Graph::TestTermination(&g)){
@@ -68,12 +66,35 @@ void Session::simulate(){
     o << j << std::endl;
 }
 
-
+//destructor
 Session::~Session() {
     for(auto &agent:agents)
-        if(agent!= nullptr)delete agent;
-
+        if(agent!= nullptr)
+            delete agent;
     agents.clear();
 }
 
 void Session::setGraph(const Graph &graph) {g=graph;}
+
+const Graph &Session::getGraph() const {
+    return g;
+}
+
+void Session::infectNode() {
+
+
+}
+
+void Session::enqueueInfected(int a) {
+    infectedQueue.push(a);
+}
+
+queue<int> Session::getInfectedQueue() const {
+    return infectedQueue;
+}
+
+int Session::dequeueInfected() {
+    int output = infectedQueue.front();
+    infectedQueue.pop();
+    return output;
+}
