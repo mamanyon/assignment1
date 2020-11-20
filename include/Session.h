@@ -16,9 +16,13 @@ enum TreeType{
 
 class Session{
 public:
-    Session(const std::string& path);
+    Session(const std::string &path); //constructor
+    Session(); //empty constructor
+    Session(const Session &other); //copy constructor
+    const Session &operator=(const Session &other); //copy assignment operator
+    Session(Session&& other); //move constructor
+    const Session &operator=(Session &&other); //move assignment operator
     virtual ~Session(); //destructor
-    Session(const Session& other); //copy constructor
     void simulate();
     void addAgent(const Agent& agent);
     void setGraph(const Graph& graph);
@@ -35,6 +39,8 @@ private:
     std::vector<Agent*> agents;
     int counterCurrCycle;
     queue<int> infectedQueue;
+
+    void createOutput();
 }
 
 #endif
