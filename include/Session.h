@@ -41,6 +41,8 @@ private:
     queue<int> infectedQueue;
 
     void createOutput();
+
+    void clear();
 }
 
 #endif
