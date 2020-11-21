@@ -1,7 +1,8 @@
 #include <vector>
 #include "../include/Graph.h"
 #include "queue"
-
+#include "../include/Tree.h"
+#include "../include/Session.h"
 using namespace std;
 
 Graph::Graph(vector<vector<int>> matrix) : edges(matrix), status(edges.size()) {
@@ -40,26 +41,6 @@ void Graph::printStatus() {
 
 }
 
-
-void Graph::BFS_run(const Session &session, queue<Tree *> &que, vector<bool> &visitedArr) {
-    while (!que.empty()) {
-        int currVertex = que.front()->getRoot();
-        que.pop();
-
-        for (int i = 0; i <= i; i++) {
-            int adjVertex = *i;
-            if (!visitedArr[adjVertex]) {
-                visitedArr[adjVertex] = true;
-                Tree *child = Tree::createTree(session, adjVertex);
-                Tree::addChild(child);
-                que.push(adjVertex);
-            }
-
-
-        }
-    }
-}
-
 condition Graph::getStatus(int a) const {
     return status[a];
 }
@@ -83,22 +64,41 @@ void Graph::quarantine(int a) {
 }
 
 
-Tree *BFS(const Session &session, int root) {
+void Graph::BFS_run(const Session &session, queue<Tree *> &que, vector<bool> &visitedArr) const {
+    while (!que.empty()) {
+        Tree * curr=que.front();
+        int currVertex = (*curr).getRoot();
+        que.pop();
+
+        for (int i = 0; i <= session.getGraph().getGraphSize(); i++) {
+            int adjVertex = i;
+            if(getEdges()[currVertex][adjVertex]==1) {
+                if (!visitedArr[adjVertex]) {
+                    visitedArr[adjVertex] = true;
+                    Tree *child = Tree::createTree(session, adjVertex);
+                    (curr)->addChild(*child);
+                    que.push(child);
+                }
+            }
+
+
+        }
+    }
+}
+
+Tree *Graph::BFS(const Session &session, int root) const {
     Tree *newTree = Tree::createTree(session, root);
-    int size = getGraphSize();
+    int size = session.getGraph().getGraphSize();
     vector<bool> visited(size);
     for (int i = 0; i < size; i++)
         visited[i] = false;
     //create queue for bfs
-    queue<Tree *> *que = new ::queue<Tree *>;
+    queue<Tree *> que ;
     //Mark the curr node as visited and enqueue
     visited[root] = true;
-    que->push(newTree);
-    que->front()->BFS_run(session, *que, visited);
-    delete que;
+    que.push(newTree);
+    this->BFS_run(session,que,visited);
     return newTree;
-
-
 }
 
 

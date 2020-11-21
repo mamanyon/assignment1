@@ -20,7 +20,7 @@ public:
     void infectNode(int nodeInd);
     bool isInfected(int nodeInd);
     Tree *BFS(const Session &session , int root) const;
-    void BFS_run(const Session &session , std::queue<Tree*>&q, std::vector<bool>&VisitedArr);
+    void BFS_run(const Session &session , std::queue<Tree*>&q, std::vector<bool>&VisitedArr) const;
     void quarantine(int);
     int getGraphSize() const;
 

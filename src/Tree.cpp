@@ -63,6 +63,7 @@ Tree &Tree::operator=(const Tree &&otherT) {
         clear();
         this->node = otherT.node;
         children = otherT.children;
+        //otherT.children.clear();
         //clear ??
     }
     return *this;
@@ -78,18 +79,21 @@ void Tree::addChild(const Tree &child) {
 Tree *Tree::createTree(const Session &session, int rootLabel) {
     TreeType type = session.getTreeType();
     Tree *output;
-    if (type == MaxRank)
+    if (type == MaxRank){
         output = new MaxRankTree(rootLabel);
-    if (type == Root)
+        return output;
+    }else{
+    if (type == Root){
         output = new RootTree(rootLabel);
-    if (type == Cycle)
+        return output;
+    }else{ // type == Cycle
         output = new CycleTree(rootLabel, session.getCurrCycle());
     return output;
 }
 
-const Tree &Tree::getChild(int ind) const { //given an index returns the child in the specific index
-    return *children[ind];
-}
+//const Tree &Tree::getChild(int ind) const { //given an index returns the child in the specific index
+//    return *children[ind];
+//}
 
 int Tree::NumberOfChildren() {
     return children.size();

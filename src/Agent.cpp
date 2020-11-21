@@ -14,6 +14,7 @@ void ContactTracer::act(Session &session) {
         Tree *bfs = session.getGraph().BFS(session, infected);
         int Remove = bfs->traceTree();
         Graph updated = session.getGraph();
+
         updated.quarantine(Remove);
         session.setGraph(updated);
 
