@@ -23,7 +23,8 @@ public:
     int NumberOfChildren();
     static Tree* createTree(const Session& session, int rootLabel);
     virtual int traceTree()=0;
-    int getRoot();
+    int getRoot() const;
+    std::vector<Tree*> getChildren() const;
 
 
 

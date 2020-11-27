@@ -23,31 +23,34 @@ void ContactTracer::act(Session &session) {
     }
 }
 
-    Agent *ContactTracer::clone() const {
-        return new ContactTracer(*this);
-    }
+Agent *ContactTracer::clone() const {
+    return new ContactTracer(*this);
+}
 
 
-    void Virus::act(Session &session) {
-        Graph k = session.getGraph();
-        if (k.getStatus(nodeInd) == carrier)
-            session.enqueueInfected(nodeInd);
+void Virus::act(Session &session) {
+    Graph k = session.getGraph();
+    if (k.getStatus(nodeInd) == carrier) {
+        session.enqueueInfected(nodeInd);
         k.infectNode(nodeInd);
-        for (int i = 0; i < k.getGraphSize(); i++) {
-            if (k.getStatus(i) == healthy) {
-                Virus v(i);
-                session.addAgent(v);
-                k.infectNode(i);
-                break;
-            }
+    }
+    for (int i = 0; i < k.getGraphSize(); i++) {
+
+        if (k.getStatus(i) == healthy && k.getEdges()[nodeInd][i] == 1) {
+            Virus v(i);
+            session.addAgent(v);
+            k.infectNode(i);
+            break;
         }
-        session.setGraph(k);
-
     }
+    session.setGraph(k);
 
-    Agent *Virus::clone() const {
-        return new Virus(*this);
-    }
-    Virus::Virus(int nodeInd):nodeInd(nodeInd) {
+}
+
+Agent *Virus::clone() const {
+    return new Virus(*this);
+}
+
+Virus::Virus(int nodeInd) : nodeInd(nodeInd) {
 }
 

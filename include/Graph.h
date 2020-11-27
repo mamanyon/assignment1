@@ -26,7 +26,8 @@ public:
 
 
     bool TestTermination(Graph *pGraph);
-    void printStatus();
+
+    void setStatus(int i);
 
 private:
     std::vector<std::vector<int>> edges;

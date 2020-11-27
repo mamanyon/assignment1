@@ -6,40 +6,44 @@
 using namespace std;
 
 Graph::Graph(vector<vector<int>> matrix) : edges(matrix), status(edges.size()) {
-    for(int i=0; i < status.size(); i++)
+    int length = status.size();
+    for(int i=0; i < length; i++)
         status[i]=healthy;
 }
 
 void Graph::infectNode(int nodeInd) {
+    if(status[nodeInd] ==sick){
+        return;
+    }
     if (status[nodeInd] == carrier) {
-        status[nodeInd] == sick;
+        status[nodeInd] = sick;
     } else
-        status[nodeInd] == carrier;
+        status[nodeInd] = carrier;
 }
 
 bool Graph::isInfected(int nodeInd) {
-    if(status[nodeInd] == sick | status[nodeInd]== carrier)
+    if(status[nodeInd] == sick || status[nodeInd]== carrier)
         return true;
     else
         return false;
 }
 
 bool Graph::TestTermination(Graph *pGraph) {
-    bool terminate = true;
-    for (int i = 0; i < pGraph->getGraphSize() & terminate; i++) {
-        if (status[i] != sick) //is fully infected?
-            terminate=false;
+    int length = edges.size();
+    for (int i = 0; i < length; i++) {
+        if (status[i] != healthy) {
+            if(status[i] == carrier)
+                return false;
+            int neighbors = edges[i].size();
+            for (int j = 0; j < neighbors; j++) {
+                if (edges[i][j] == 1 && status[j] != sick) //is fully infected
+                    return false;
+            }
+        }
     }
-    // need to check if there's a virus in a c.c.
-
-
-
-    return terminate;
+    return true;
 }
 
-void Graph::printStatus() {
-
-}
 
 condition Graph::getStatus(int a) const {
     return status[a];
@@ -55,10 +59,11 @@ int Graph::getGraphSize() const {
 }
 
 void Graph::quarantine(int a) {
-    for (int i = 0; i < edges.size(); i++) {
+    int length = edges.size();
+    for (int i = 0; i < length; i++) {
         edges[a][i] = 0;
     }
-    for (int i = 0; i < edges.size(); i++) {
+    for (int i = 0; i < length; i++) {
         edges[i][a] = 0;
     }
 }
@@ -70,14 +75,15 @@ void Graph::BFS_run(const Session &session, queue<Tree *> &que, vector<bool> &vi
         int currVertex = (*curr).getRoot();
         que.pop();
 
-        for (int i = 0; i <= session.getGraph().getGraphSize(); i++) {
+        for (int i = 0; i < session.getGraph().getGraphSize(); i++) {
             int adjVertex = i;
             if(getEdges()[currVertex][adjVertex]==1) {
                 if (!visitedArr[adjVertex]) {
                     visitedArr[adjVertex] = true;
                     Tree *child = Tree::createTree(session, adjVertex);
                     (curr)->addChild(*child);
-                    que.push(child);
+                    que.push(curr->getChildren().back());
+                    delete child;
                 }
             }
 
@@ -99,6 +105,15 @@ Tree *Graph::BFS(const Session &session, int root) const {
     que.push(newTree);
     this->BFS_run(session,que,visited);
     return newTree;
+}
+
+Graph::Graph():edges(vector<vector<int>>()),status(vector<condition>()) {
+
+}
+
+//set vertex to carrier status
+void Graph::setStatus(int i) {
+    status[i] = carrier;
 }
 
 

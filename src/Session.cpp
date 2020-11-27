@@ -1,6 +1,6 @@
 #include <fstream>
 #include <iostream>
-#include "../json.hpp"
+#include "../include/json.hpp"
 #include "../include/Session.h"
 
 using namespace std;
@@ -9,14 +9,23 @@ using json = nlohmann::json;
 //rule of 5
 //constructor
 Session::Session(const std::string &path) : g(Graph()), treeType(), agents(std::vector<Agent *>()),
-                                            counterCurrCycle(0) {
+                                            counterCurrCycle(0), infectedQueue(queue<int>()) {
     ifstream file(path);
     json j;
     file >> j;
-    g = Graph(j["graph"]);
-    treeType = TreeType(j["tree"]);
 
-    vector<int> CarryNodes = {};
+    std::vector<std::vector<int>> edges;
+    g = Graph(j["graph"]);
+    for(const auto &adj : j["graph"]) {
+        edges.push_back(adj);
+    }
+    if(j["tree"]=="M")
+        treeType=MaxRank;
+    if(j["tree"]=="R")
+        treeType=Root;
+    if(j["tree"]=="C")
+        treeType=Cycle;
+
     int CarryNode;
     Agent *agent;
     for (auto &elem: j["agents"]) {
@@ -25,14 +34,20 @@ Session::Session(const std::string &path) : g(Graph()), treeType(), agents(std::
         else {
             CarryNode = elem.at(1);
             agent = new Virus(CarryNode);
-            CarryNodes.push_back(CarryNode);
+            g.setStatus(CarryNode);//status [CarryNode] = carry;
+
         }
         addAgent(*agent);
+        delete agent;
     }
 }
+//________________________
+
+
+
 
 //empty constructor
-Session::Session() : g(Graph()), treeType(), agents(), counterCurrCycle(0) {}
+Session::Session() : g(Graph()), treeType(), agents(), counterCurrCycle(0), infectedQueue(queue<int>()) {}
 
 //copy constructor
 Session::Session(const Session &other) : g(other.g), treeType(other.treeType),
@@ -146,13 +161,13 @@ void Session::simulate() {
     bool over = false;
     while (!over) {
         int size = agents.size();
-        for (int i = 0; i < size & !over; i++) {
+        for (int i = 0; i < size && !over; i++) {
             agents[i]->act(*this);
             if (g.TestTermination(&g)) {
                 over = true;
             }
-            counterCurrCycle++;
-            g.printStatus();
+        }
+        counterCurrCycle++;
         }
 
         vector<int> infected_vertices;
@@ -163,10 +178,9 @@ void Session::simulate() {
         nlohmann::json j;
         j["infected"] = infected_vertices;
         j["graph"] = g.getEdges();
-        std::ofstream o("output.json");
-        o << j << std::endl;
+        std::ofstream i("../output.json");
+        i << j << std::endl;
     }
-}
 
 
 void Session::setGraph(const Graph &graph) { g = graph; }
@@ -188,17 +202,4 @@ int Session::dequeueInfected() {
         infectedQueue.pop();
         return output;
 }
-void Session::createOutput() {
-    json outputJson;
 
-    std::vector<int> *infected;
-    for (int i = 0; i < g.getGraphSize(); i++) {
-        if (g.isInfected(i)) {
-            infected->push_back(i);
-        }
-    }
-    outputJson["graph"] = g.getEdges();
-    outputJson["infected"] = *infected;
-
-    std::ofstream outputFile("output.json");
-}

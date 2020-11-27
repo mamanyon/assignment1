@@ -31,17 +31,17 @@ public:
     TreeType getTreeType() const;
     int getCurrCycle() const;
     const Graph& getGraph() const;
-    queue<int> getInfectedQueue() const;
+    std::queue<int> getInfectedQueue() const;
     
 private:
     Graph g;
     TreeType treeType;
     std::vector<Agent*> agents;
     int counterCurrCycle;
-    queue<int> infectedQueue;
-    void createOutput();
+    std::queue<int> infectedQueue;
+
 
     void clear();
-}
+};
 
 #endif
